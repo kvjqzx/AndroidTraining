@@ -3,10 +3,12 @@ package com.kvjqzx.androidtraining;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_MESSAGE = "com.kvjqzx.androidtraining.MESSAGE";
     private EditText mMessage;
     private EditText mDir;
+    private EditText mExternal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
         mMessage = (EditText) findViewById(R.id.editText);
         mDir = (EditText) findViewById(R.id.editText2);
+        mExternal = (EditText) findViewById(R.id.editText3);
 
         SharedPreferences sp = getPreferences(Context.MODE_PRIVATE);
         mMessage.setText(sp.getString(EXTRA_MESSAGE, "Hi"));
@@ -65,5 +69,36 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void GetExternal(View view) {
+        String str = "";
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            str = "External mounted.  ";
+
+            // It will create a directory in below path, system deletes when the user uninstalls
+            //  your app. /sdcard/Android/data/com.kvjqzx.androidtraining/files/Documents/Doc
+            File file = new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "Doc");
+            file.mkdir();
+            str += file.getAbsolutePath();
+            str += "  " + file.getFreeSpace();
+            str += "  " + file.getTotalSpace();
+        }
+
+        // If you use API 23 (Marshmallow) and above, you need to Request Permissions at Run Time
+        // because it's a Dangerous Permission.
+        File externalPub = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DOWNLOADS), "Pics");
+        str += externalPub.getAbsolutePath();
+        try {
+            if (!externalPub.createNewFile()) {
+                Toast.makeText(this, "Directory not created", Toast.LENGTH_SHORT).show();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        mExternal.setText(str);
     }
 }
