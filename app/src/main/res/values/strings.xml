@@ -8,4 +8,5 @@
     <string name="button_intent_map">Map</string>
     <string name="button_intent_web">Web</string>
     <string name="button_intent_chooser">Chooser</string>
+    <string name="button_intent_pick_contact">Contact</string>
 </resources>
