@@ -3,6 +3,8 @@ package com.kvjqzx.androidtraining;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,6 +16,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_MESSAGE = "com.kvjqzx.androidtraining.MESSAGE";
@@ -100,5 +103,41 @@ public class MainActivity extends AppCompatActivity {
         }
 
         mExternal.setText(str);
+    }
+
+    public void OpenPhone(View view) {
+        Uri number = Uri.parse("tel:5551234");
+        Intent callIntent = new Intent(Intent.ACTION_DIAL, number);
+        startActivity(callIntent);
+    }
+
+    public void OpenMap(View view) {
+        Uri location = Uri.parse("geo:32.0643402071,118.7905286520?z=4"); // z param is zoom level
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, location);
+        startActivity(mapIntent);
+    }
+
+    public void OpenWeb(View view) {
+        Uri webPage = Uri.parse("http://www.wlaneasy.com");
+        Intent webIntent = new Intent(Intent.ACTION_VIEW, webPage);
+
+        // If you invoke an intent and there is no app available on the device
+        // that can handle the intent, your app will crash.
+        PackageManager pm = getPackageManager();
+        List activities = pm.queryIntentActivities(webIntent, PackageManager.MATCH_DEFAULT_ONLY);
+        if (activities.size() > 0) {
+            startActivity(webIntent);
+        } else {
+            Toast.makeText(this, "No App can handle this intent.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void startChooser(View view) {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        Intent chooser = Intent.createChooser(intent, "Share this via");
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(chooser);
+        }
     }
 }

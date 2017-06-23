@@ -4,4 +4,8 @@
     <string name="button_send">Send</string>
     <string name="button_get">Get</string>
     <string name="button_external">External</string>
+    <string name="button_intent_phone">Phone</string>
+    <string name="button_intent_map">Map</string>
+    <string name="button_intent_web">Web</string>
+    <string name="button_intent_chooser">Chooser</string>
 </resources>
