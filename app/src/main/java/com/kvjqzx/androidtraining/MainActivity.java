@@ -8,6 +8,9 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -23,6 +26,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_MESSAGE = "com.kvjqzx.androidtraining.MESSAGE";
     private static final int PICK_CONTACT_REQUEST = 1;
+    private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1;
 
     private EditText mMessage;
     private EditText mDir;
@@ -149,6 +153,37 @@ public class MainActivity extends AppCompatActivity {
         Intent pickContactIntent = new Intent(Intent.ACTION_PICK, Uri.parse("content://contacts"));
         pickContactIntent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE);
         startActivityForResult(pickContactIntent, PICK_CONTACT_REQUEST);
+    }
+
+    public void checkPermission(View view) {
+        int permissionCheck = ContextCompat.checkSelfPermission(this,
+                android.Manifest.permission.READ_CONTACTS);
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(this, "permission not granted", Toast.LENGTH_SHORT).show();
+        //    if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+        //            android.Manifest.permission.READ_CONTACTS)) {
+        //    } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[] {android.Manifest.permission.READ_CONTACTS},
+                        MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+        //    }
+        }
+    }
+
+    // The callback of request the permission
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_READ_CONTACTS:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission granted.
+                    Toast.makeText(this, "Permission granted", Toast.LENGTH_SHORT).show();
+                } else {
+                    // permission denied.
+                    Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
+                }
+                return;
+        }
     }
 
     @Override
